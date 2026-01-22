@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catch My Love 💖</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to top, #ffd6e8, #fff);
+  overflow: hidden;
+  text-align: center;
+}
+
+h1 { margin-top: 20px; }
+
+#scoreBoard, #timer, #highScore {
+  font-size: 1.1rem;
+  margin: 5px;
+}
+
+.heart {
+  position: absolute;
+  font-size: 32px;
+  cursor: pointer;
+  animation: float 6s linear forwards;
+}
+
+@keyframes float {
+  from { bottom: -40px; opacity: 1; }
+  to { bottom: 110%; opacity: 0; }
+}
+
+/* 💖 Explosion particles */
+.particle {
+  position: absolute;
+  font-size: 16px;
+  pointer-events: none;
+  animation: explode 700ms ease-out forwards;
+}
+
+@keyframes explode {
+  from { opacity: 1; transform: translate(0,0) scale(1); }
+  to {
+    opacity: 0;
+    transform: translate(var(--x), var(--y)) scale(1.4);
+  }
+}
+
+#result {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 182, 193, 0.95);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.3rem;
+}
+
+button {
+  margin-top: 15px;
+  padding: 12px 22px;
+  border-radius: 20px;
+  border: none;
+  background: #ff69b4;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+button:hover { background: #ff85c1; }
+</style>
+</head>
+
+<body>
+
+<h1>💖 Catch My Love, Jelo</h1>
+<div id="scoreBoard">Score: 0</div>
+<div id="highScore">🥇 High Score: 0</div>
+<div id="timer">Time left: 20s</div>
+
+<div id="result"></div>
+
+<!-- 🎶 heartbeat sound -->
+<audio id="heartbeat" src="music/heartbeat.mp3" preload="auto"></audio>
+
+<script>
+const hisName = "Jelo"; // 💖 personalization
+
+let score = 0;
+let timeLeft = 20;
+let gameInterval, timerInterval;
+
+/* 💞 combo system */
+let lastClickTime = 0;
+let combo = 0;
+
+/* 🥇 high score */
+let highScore = localStorage.getItem("highScore") || 0;
+document.getElementById("highScore").innerText = "🥇 High Score: " + highScore;
+
+const heartbeat = document.getElementById("heartbeat");
+
+function startGame() {
+  gameInterval = setInterval(spawnHeart, 800);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timer").innerText = "Time left: " + timeLeft + "s";
+    if (timeLeft <= 0) endGame();
+  }, 1000);
+}
+
+function spawnHeart() {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+
+  const now = Date.now();
+  if (now - lastClickTime < 800) combo++;
+  else combo = 0;
+
+  const isCombo = combo >= 2;
+  heart.innerText = isCombo ? "💞" : "💖";
+  heart.style.left = Math.random() * 90 + "vw";
+
+  heart.onclick = () => {
+    const points = isCombo ? 2 : 1;
+    score += points;
+    lastClickTime = Date.now();
+
+    if (isCombo) {
+      heartbeat.currentTime = 0;
+      heartbeat.play();
+    }
+
+    explodeHeart(heart);
+    document.getElementById("scoreBoard").innerText = "Score: " + score;
+    heart.remove();
+  };
+
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 6000);
+}
+
+/* 💖 Explosion */
+function explodeHeart(heart) {
+  const rect = heart.getBoundingClientRect();
+
+  for (let i = 0; i < 6; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.innerText = "💖";
+    p.style.left = rect.left + "px";
+    p.style.top = rect.top + "px";
+    p.style.setProperty("--x", (Math.random() * 80 - 40) + "px");
+    p.style.setProperty("--y", (Math.random() * -80) + "px");
+
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 700);
+  }
+}
+
+function endGame() {
+  clearInterval(gameInterval);
+  clearInterval(timerInterval);
+  document.querySelectorAll(".heart").forEach(h => h.remove());
+
+  let unlocked = false;
+  if (score > highScore) {
+    highScore = score;
+    localStorage.setItem("highScore", highScore);
+    localStorage.setItem("perfectScore", "true"); // 💍 unlock secret
+    unlocked = true;
+  }
+
+  let message = "";
+  if (unlocked) {
+    message = `💍 ${hisName}, you beat your own record… I think you unlocked something special 💖`;
+  } else if (score >= 12) {
+    message = `😚 That was sweet, ${hisName}. You really know how to catch my heart.`;
+  } else {
+    message = `😏 Miss mo lang talaga ako, ${hisName}. Try again 😉`;
+  }
+
+  const result = document.getElementById("result");
+  result.style.display = "flex";
+  result.innerHTML = `
+    <h2>${message}</h2>
+    <p>Final Score: ${score}</p>
+    <p>🥇 High Score: ${highScore}</p>
+    ${unlocked ? `<button onclick="goSecret()">💍 Open Secret</button>` : ""}
+    <button onclick="restart()"> Play Again</button>
+    <button onclick="location.href='love-arcade.html'">Back to Love Arcade</button>
+
+  `;
+}
+
+function goSecret() {
+  window.location.href = "secret.html";
+}
+
+function restart() {
+  location.reload();
+}
+
+function goHome() {
+  window.location.href = "index.html";
+}
+
+startGame();
+</script>
+
+</body>
+</html>

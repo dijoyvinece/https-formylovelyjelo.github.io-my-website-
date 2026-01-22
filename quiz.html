@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How Well Do You Know Me? 💕</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="romantic-bg">
+
+  <div class="card">
+    <h1>💗 How Well Do You Know Me?</h1>
+    <h4> Ayusin mo Jelo, kapag yan dimo naperfect yari ka talaga<br>🙂🔪</h4>
+
+    <div id="quiz"></div>
+
+    <button id="submitBtn" onclick="submitQuiz()">Submit Answers 💌</button>
+
+    <div id="score"></div>
+
+    <button id="retryBtn" onclick="retryQuiz()" style="display:none;">Retry Quiz</button>
+    <button class="back-btn" onclick="goBack()">I love you Dibayn😘</button>
+  </div>
+
+  <!-- Confetti canvas -->
+  <canvas id="confetti"></canvas>
+
+<script>
+const questions = [
+  {
+    question: "What is my favorite color?",
+    choices: ["Pink", "Black", "Blue", "Purple"],
+    answer: 1,
+    comments: [
+      "💗 Cute answer… but not quite.",
+      "🖤 YES. You remember.",
+      "😅 Hmm nope.",
+      "💜 Close, but no."
+    ]
+  },
+  {
+    question: "What do I love more?",
+    choices: ["Sleep", "Food", "You 😘", "Money"],
+    answer: 2,
+    comments: [
+      "😴 Relatable but no.",
+      "🍔 Tempting… but still no.",
+      "🥹❤️ CORRECT. Always you.",
+      "😤 Hoy wala kang puso?"
+    ]
+  },
+  {
+    question: "What scares me the most?",
+    choices: ["Heights", "Losing you", "Spiders", "Dark"],
+    answer: 1,
+    comments: [
+      "😅 Oo din, pero mali.",
+      "🥺 Yes… this one hurts.",
+      "🕷️ Nope.",
+      "🌑 Hindi rin."
+    ]
+  },
+  {
+    question: "Ano ang favorite sports ko?",
+    choices: ["Volleyball", "Badminton", "Sepak", "Awayin ka😉"],
+    answer: 0,
+    comments: [
+      "🏐 CORRECT! Proud of you.",
+      "😆 Close! i mean oo din pero yung pinaka.",
+      "😅 Nope.",
+      "🙄 Loko ka. Pero oo din hehehe"
+    ]
+  },
+  {
+    question: "Ilang taon na ako?",
+    choices: ["25", "30", "19", "23"],
+    answer: 3,
+    comments: [
+      "😐 Sobra- sapak gusto mo :).",
+      "😑 Grabe ka, tadyakan kita dyan e.",
+      "😂 Tama HAHAHA!",
+      "🎂 Hays, oo nalang😒."
+    ]
+  },
+  {
+    question: "Taga saan ako?",
+    choices: ["Sa puso mo", "Virginia", "Tabang", "Piat"],
+    answer: 1,
+    comments: [
+      "🥹 Smooth pero mali.",
+      "📍 Very Good lovelove ko!",
+      "😅 Nope.",
+      "😆 Hindi rin."
+    ]
+  },
+  {
+    question: "Ano ang favorite Food ko?",
+    choices: ["Spag", "Macaroni", "Carbonara", "Pansit"],
+    answer: 1,
+    comments: [
+      "🍝 Masarap pero no.",
+      "🍽️ YES! You know me.",
+      "😅 Hindi.",
+      "😆 Nope."
+    ]
+  },
+  {
+    question: "Anong taon ako grumaduate?",
+    choices: ["2023", "2021", "2020", "2024"],
+    answer: 3,
+    comments: [
+      "😅 Close.",
+      "😆 Nope.",
+      "😬 Mali.",
+      "🎓 Correct!"
+    ]
+  },
+  {
+    question: "Ano ang exact Birthday ko?",
+    choices: ["12/27/01", "12/27/02", "11/27/02", "12/27/03"],
+    answer: 1,
+    comments: [
+      "😒 Mali.",
+      "🎂 YES! Perfect.",
+      "😒 Mali nga.",
+      "😤 Isa pa."
+    ]
+  },
+  {
+    question: "Mahal mo ba ako?",
+    choices: ["Hindi", "Ewan ko", "OPOOOO", "Asa ka"],
+    answer: 2,
+    comments: [
+      "😤 Tampo ako.",
+      "😒 Ayusin mo.",
+      "🥹❤️ Correct answer only.",
+      "😑 Excuse me?"
+    ]
+  },
+  {
+    question: "Nakailang I love you na ako sa mga messages ko rito?",
+    choices: ["5", "10", "9", "13"],
+    answer: 0,
+    comments: [
+      "🥹 YES. You noticed.",
+      "🙂 Sabi ko I love you lang, not considered mahal kita.",
+      "🤨 Nope.",
+      "😬 Mali."
+    ]
+  }
+];
+
+
+const quizDiv = document.getElementById("quiz");
+
+function loadQuiz() {
+  quizDiv.innerHTML = "";
+  document.getElementById("score").innerHTML = "";
+
+  questions.forEach((q, index) => {
+    const div = document.createElement("div");
+    div.className = "quiz-question";
+    div.id = `question-${index}`;
+
+    let html = `<h3>${index + 1}. ${q.question}</h3>`;
+    q.choices.forEach((choice, i) => {
+      html += `
+        <label>
+          <input type="radio" name="q${index}" value="${i}">
+          ${choice}
+        </label>
+      `;
+    });
+
+    div.innerHTML = html;
+    quizDiv.appendChild(div);
+  });
+}
+
+loadQuiz();
+
+function submitQuiz() {
+  let score = 0;
+
+  questions.forEach((q, index) => {
+    const selected = document.querySelector(`input[name="q${index}"]:checked`);
+    const qDiv = document.getElementById(`question-${index}`);
+
+    // remove old comment if retry
+    const oldComment = qDiv.querySelector(".comment");
+    if (oldComment) oldComment.remove();
+
+    if (selected) {
+      const choiceIndex = parseInt(selected.value);
+
+      // show comment
+      const comment = document.createElement("p");
+      comment.className = "comment";
+      comment.innerText = q.comments[choiceIndex];
+      qDiv.appendChild(comment);
+
+      if (choiceIndex === q.answer) {
+        score++;
+        qDiv.classList.add("correct");
+      } else {
+        qDiv.classList.add("wrong");
+      }
+    }
+  });
+
+  animateScore(score);
+  document.getElementById("retryBtn").style.display = "inline-block";
+  document.getElementById("submitBtn").disabled = true;
+
+  if (score === questions.length) {
+    startConfetti();
+  }
+}
+
+
+function animateScore(finalScore) {
+  let count = 0;
+  const scoreDiv = document.getElementById("score");
+
+  const interval = setInterval(() => {
+    scoreDiv.innerHTML = `<h2>💖 Score: ${count} / ${questions.length}</h2>`;
+    count++;
+
+    if (count > finalScore) {
+      clearInterval(interval);
+      showMessage(finalScore); // ✅ THIS WAS MISSING
+    }
+  }, 200);
+}
+
+function goToSecret() {
+  localStorage.setItem("perfectScore", "true");
+  window.location.href = "secret.html";
+}
+
+
+function retryQuiz() {
+  document.getElementById("submitBtn").disabled = false;
+  document.getElementById("retryBtn").style.display = "none";
+  stopConfetti();
+  loadQuiz();
+}
+
+
+
+function goBack() {
+  window.location.href = "index.html";
+}
+
+/* 🎉 CONFETTI */
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let confettiPieces = [];
+let confettiActive = false;
+
+function startConfetti() {
+  confettiActive = true;
+  confettiPieces = Array.from({ length: 120 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    size: Math.random() * 6 + 4,
+    speed: Math.random() * 3 + 2,
+    color: `hsl(${Math.random() * 360}, 100%, 70%)`
+  }));
+  animateConfetti();
+}
+
+function animateConfetti() {
+  if (!confettiActive) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  confettiPieces.forEach(p => {
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x, p.y, p.size, p.size);
+    p.y += p.speed;
+    if (p.y > canvas.height) p.y = -10;
+  });
+
+  requestAnimationFrame(animateConfetti);
+}
+
+function stopConfetti() {
+  confettiActive = false;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function showMessage(score) {
+  const total = questions.length;
+  let message = "";
+
+  if (score === total) {
+    message = `
+      <p>🥹❤️ PERFECT SCORE.</p>
+      <p>You know me by heart… and that means everything to me.</p>
+      <button onclick="goToSecret()">💍 Open Your Surprise</button>
+    `;
+  } else if (score >= total - 1) {
+    message = `<p>😏 Almost perfect… you know me really well.</p>`;
+  } else if (score >= 1) {
+    message = `<p>🥺 You’re trying—and that’s cute.</p>`;
+  } else {
+    message = `<p>😤 GRABE KA… we need to talk.</p>`;
+  }
+
+  document.getElementById("score").innerHTML += message;
+}
+
+</script>
+
+</body>
+</html>

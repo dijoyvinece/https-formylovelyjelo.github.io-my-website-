@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find the Hidden Heart 💖</title>
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #1b1b2f, #4b2e83);
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #fff;
+  text-align: center;
+}
+
+h1 { margin-bottom: 10px; font-size: 2em; }
+
+.grid {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.card {
+  width: 60px;
+  height: 60px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  cursor: pointer;
+  transition: transform 0.3s, background 0.3s;
+  position: relative;
+}
+
+.card.flipped {
+  background: #ff8fab;
+  transform: scale(1.05);
+}
+
+#message {
+  font-size: 16px;
+  margin-top: 10px;
+  min-height: 24px;
+}
+
+#scoreBoard, #timer {
+  font-size: 18px;
+  margin: 5px 0;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border-radius: 25px;
+  border: none;
+  background: #ff6f91;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover { background: #ff4d6d; }
+
+@keyframes heartSparkle {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.8; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.heart-sparkle {
+  position: absolute;
+  font-size: 24px;
+  pointer-events: none;
+  animation: heartSparkle 0.6s forwards;
+}
+</style>
+</head>
+<body>
+
+<h1>🫣 Find the Hidden Heart</h1>
+<p>Click the cards to find my hidden 💖</p>
+
+<p id="scoreBoard">Score: 0 | High Score: 0</p>
+<p id="timer">Time: 60s</p>
+
+<div class="grid" id="grid"></div>
+
+<div id="message"></div>
+
+<button onclick="restartGame()">🔁 Restart</button>
+<br>
+<button onclick="location.href='love-arcade.html'">⬅ Back to Love Arcade</button>
+
+<script>
+const grid = document.getElementById("grid");
+let totalBoxes = 16; // starting number of boxes
+let hiddenIndex;
+let found = false;
+let score = 0;
+let highScore = localStorage.getItem("hiddenHigh") || 0;
+let timeLeft = 60;
+let timerInterval;
+
+const scoreBoard = document.getElementById("scoreBoard");
+const timerDisplay = document.getElementById("timer");
+
+function createBoard() {
+  grid.innerHTML = "";
+  found = false;
+
+  // Calculate grid columns for responsive layout
+  let columns = Math.ceil(Math.sqrt(totalBoxes));
+  grid.style.gridTemplateColumns = `repeat(${columns}, 70px)`;
+
+  hiddenIndex = Math.floor(Math.random() * totalBoxes);
+
+  for (let i = 0; i < totalBoxes; i++) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.index = i;
+    card.innerHTML = "❔";
+    card.addEventListener("click", () => flipCard(card));
+    grid.appendChild(card);
+  }
+
+  document.getElementById("message").innerHTML = "";
+  updateScore();
+}
+
+function flipCard(card) {
+  if (found || card.classList.contains("flipped") || timeLeft <= 0) return;
+
+  card.classList.add("flipped");
+
+  if (parseInt(card.dataset.index) === hiddenIndex) {
+    card.innerHTML = "💖";
+    document.getElementById("message").innerHTML = "🥰 You found my heart!";
+    found = true;
+    score++;
+    updateScore();
+    showHeartSparkle(card);
+
+    // Add more boxes for next round
+    totalBoxes += 4;
+    setTimeout(createBoard, 800);
+
+  } else {
+    card.innerHTML = "💔";
+    setTimeout(() => {
+      card.innerHTML = "❔";
+      card.classList.remove("flipped");
+    }, 600);
+  }
+}
+
+function showHeartSparkle(card) {
+  const sparkle = document.createElement("div");
+  sparkle.className = "heart-sparkle";
+  sparkle.innerText = "💖";
+  card.appendChild(sparkle);
+  setTimeout(() => sparkle.remove(), 600);
+}
+
+function updateScore() {
+  if (score > highScore) {
+    highScore = score;
+    localStorage.setItem("hiddenHigh", highScore);
+  }
+  scoreBoard.innerText = `Score: ${score} | High Score: ${highScore}`;
+}
+
+function restartGame() {
+  score = 0;
+  totalBoxes = 16;
+  timeLeft = 60;
+  clearInterval(timerInterval);
+  createBoard();
+  startTimer();
+}
+
+/* Timer */
+function startTimer() {
+  clearInterval(timerInterval);
+  timerDisplay.innerText = `Time: ${timeLeft}s`;
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timerDisplay.innerText = `Time: ${timeLeft}s`;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      document.getElementById("message").innerHTML = `⏳ Time's up! Your Score: ${score} | High Score: ${highScore}`;
+    }
+  }, 1000);
+}
+
+// Initialize
+createBoard();
+startTimer();
+</script>
+
+</body>
+</html>

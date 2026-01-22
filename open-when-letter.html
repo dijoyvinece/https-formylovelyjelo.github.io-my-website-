@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>“I thought about your hardest moments.”</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="romantic-bg">
+
+<div class="card">
+  <h2 id="title"></h2>
+  <p id="message"></p>
+
+  <button onclick="goHome()">Back to Home</button>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const type = params.get("type");
+
+const messages = {
+  sleep: {
+    title: "🌙 Open when you can’t sleep",
+    text: "If your mind is loud tonight… remember that somewhere, someone loves you more than words can explain. Close your eyes and feel my hug, my love..."
+  },
+  fight: {
+    title: "💔 Open when we fight",
+    text: "I may be upset, but I never stopped loving you. Even when we argue, I choose you. Always. Huwag ka sana mawalan ng gana sa akin, inaaway kita dahil mahal kita. Im sorry my love, huwag mo sa ulit ako iwan..."
+  },
+  tired: {
+    title: "🥺 Open when you’re tired of everything",
+    text: "You don’t have to be strong today. Rest. Breathe. I’m proud of you for surviving. Its ok to rest for a bit, just don't give up my love, im always here for you... forever."
+  },
+  remember: {
+    title: "💖 Open when you need to remember us",
+    text: "We didn’t come this far by accident. What we have is real, and I’m still here—choosing you. If ever you opened this, think of me smiling at you, you never leave my mind my love."
+  }
+};
+
+// 🔒 Lock after first open
+if (localStorage.getItem("opened_" + type)) {
+  document.body.innerHTML = "<h2 style='text-align:center;'>🔒 This letter can only be read once.</h2>";
+} else {
+  localStorage.setItem("opened_" + type, "true");
+}
+
+document.getElementById("title").innerText = messages[type].title;
+
+// 💖 Typing animation
+let i = 0;
+function typeMessage() {
+  if (i < messages[type].text.length) {
+    document.getElementById("message").innerHTML += messages[type].text.charAt(i);
+    i++;
+    setTimeout(typeMessage, 40);
+  }
+}
+typeMessage();
+
+function goHome() {
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>

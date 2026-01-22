@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heart Catch 💖</title>
+<style>
+body {
+  background: #ffe6f0;
+  overflow: hidden;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  margin-top: 10px;
+  font-size: 3em;
+}
+
+#message {
+  font-size: 1.8em;
+  margin-top: 10px;
+}
+
+#scoreBoard, #timer {
+  font-size: 1.5em;
+  margin: 10px 0;
+}
+
+#basket {
+  position: fixed;
+  bottom: 20px;
+  font-size: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  touch-action: none;
+}
+
+.combo {
+  position: absolute;
+  font-size: 30px;
+  color: #ff4d6d;
+  font-weight: bold;
+  pointer-events: none;
+  text-shadow: 0 0 5px #fff;
+}
+
+.heart {
+  position: absolute;
+  font-size: 50px;
+  animation: fall linear forwards;
+}
+
+.sparkle {
+  position: absolute;
+  font-size: 20px;
+  opacity: 1;
+  pointer-events: none;
+  animation: sparkle 800ms forwards;
+}
+
+@keyframes fall {
+  to { transform: translateY(100vh); }
+}
+
+@keyframes sparkle {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+}
+
+button.back-btn {
+  margin-top: 15px;
+  padding: 15px 30px;
+  font-size: 1.5em;
+  border-radius: 25px;
+  border: none;
+  background: #ff6f91;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(255,182,193,0.5);
+}
+
+button.back-btn:hover {
+  background: #ff4d6d;
+}
+</style>
+</head>
+<body>
+
+<h1>💖 Catch the Hearts</h1>
+<p id="message">Catch them all, my love 🥰</p>
+<p id="scoreBoard">Score: 0 | High Score: 0 | Combo: 0</p>
+<p id="timer">Time: 30s</p>
+
+<div id="basket">🫶</div>
+
+<button class="back-btn" onclick="location.href='love-arcade.html'">Back to love arcade</button>
+
+<script>
+const basket = document.getElementById("basket");
+const message = document.getElementById("message");
+const scoreBoard = document.getElementById("scoreBoard");
+const timerDisplay = document.getElementById("timer");
+
+let score = 0;
+let highScore = localStorage.getItem("heartCatchHigh") || 0;
+let combo = 0;
+let lastCatchTime = 0;
+let gameTime = 30; // seconds
+let gameOver = false;
+let fallSpeed = 4; // base fall duration in seconds
+
+scoreBoard.innerText = `Score: ${score} | High Score: ${highScore} | Combo: ${combo}`;
+
+/* 🫶 Mouse + touch sliding basket */
+function moveBasket(x) {
+  const basketWidth = basket.offsetWidth;
+  const maxX = window.innerWidth - basketWidth/2;
+  const minX = basketWidth/2;
+  basket.style.left = Math.min(Math.max(x, minX), maxX) + "px";
+}
+
+document.addEventListener("mousemove", e => moveBasket(e.clientX));
+document.addEventListener("touchmove", e => moveBasket(e.touches[0].clientX));
+
+const messages = [
+  "I love you 🥹",
+  "I’m proud of you 💕",
+  "You’re doing great 🤍",
+  "I choose you everyday 💖",
+  "You make me happy 😌"
+];
+
+/* 💖 Drop hearts */
+function dropHeart() {
+  if(gameOver) return;
+
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerText = "💖";
+  
+  const size = 40 + Math.random() * 20;
+  heart.style.fontSize = size + "px";
+  heart.style.left = Math.random() * (window.innerWidth - size) + "px";
+  heart.style.top = "-50px";
+  heart.style.animationDuration = (fallSpeed - gameTime * 0.05) + "s";
+
+  document.body.appendChild(heart);
+
+  const fallInterval = setInterval(() => {
+    const heartRect = heart.getBoundingClientRect();
+    const basketRect = basket.getBoundingClientRect();
+
+    if (
+      heartRect.bottom > basketRect.top &&
+      heartRect.left < basketRect.right &&
+      heartRect.right > basketRect.left
+    ) {
+      const now = Date.now();
+      if (now - lastCatchTime < 1000) combo++;
+      else combo = 1;
+      lastCatchTime = now;
+
+      let multiplier = 1 + combo * 0.5;
+      score += Math.floor(1 * multiplier);
+
+      if(score > highScore){
+        highScore = score;
+        localStorage.setItem("heartCatchHigh", highScore);
+      }
+
+      scoreBoard.innerText = `Score: ${score} | High Score: ${highScore} | Combo: ${combo}`;
+      message.innerText = messages[Math.floor(Math.random() * messages.length)];
+
+      // Tiny heart burst
+      createSparkle(heartRect.left, heartRect.top);
+      createSparkle(heartRect.left + 15, heartRect.top + 10);
+      createSparkle(heartRect.left - 10, heartRect.top + 5);
+
+      // Combo float effect
+      const comboText = document.createElement("div");
+      comboText.className = "combo";
+      comboText.innerText = `x${combo}`;
+      comboText.style.left = basketRect.left + basketRect.width/2 - 10 + "px";
+      comboText.style.top = basketRect.top - 50 + "px";
+      document.body.appendChild(comboText);
+      setTimeout(() => comboText.remove(), 800);
+
+      heart.remove();
+      clearInterval(fallInterval);
+    }
+
+    if(heartRect.top > window.innerHeight){
+      combo = 0;
+      scoreBoard.innerText = `Score: ${score} | High Score: ${highScore} | Combo: ${combo}`;
+    }
+  }, 30);
+
+  setTimeout(() => {
+    if(document.body.contains(heart)) heart.remove();
+    clearInterval(fallInterval);
+  }, 4000);
+}
+
+/* ✨ Sparkle particles */
+function createSparkle(x, y) {
+  const sparkle = document.createElement("div");
+  sparkle.className = "sparkle";
+  sparkle.style.left = x + "px";
+  sparkle.style.top = y + "px";
+  sparkle.innerText = "💖";
+  document.body.appendChild(sparkle);
+  setTimeout(() => sparkle.remove(), 800);
+}
+
+/* ⏱️ Timer */
+function startTimer() {
+  const timerInterval = setInterval(() => {
+    gameTime--;
+    timerDisplay.innerText = `Time: ${gameTime}s`;
+
+    if(gameTime <= 0){
+      gameOver = true;
+      clearInterval(timerInterval);
+      endGame();
+    }
+  }, 1000);
+}
+
+/* 🎉 End game popup */
+function endGame() {
+  setTimeout(() => {
+    alert(`Time's up! ⏳\nYour Score: ${score}\nHigh Score: ${highScore}`);
+  }, 200);
+}
+
+/* Start dropping hearts and timer */
+setInterval(dropHeart, 900);
+startTimer();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open When… 🌙</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="romantic-bg">
+
+<div class="card">
+  <h1>🌙 Open When…</h1>
+  <p>Each letter can be opened only once 💌</p>
+  <h5>“I thought about your hardest moments, my Love.”</h5>
+
+  <button onclick="openLetter('sleep')">🌙 Open when you can’t sleep</button>
+  <button onclick="openLetter('fight')">💔 Open when we fight</button>
+  <button onclick="openLetter('tired')">🥺 Open when you’re tired of everything</button>
+  <button onclick="openLetter('remember')">💖 Open when you need to remember us</button>
+
+  <br><br>
+  <button onclick="location.href='index.html'">Back to Home</button>
+</div>
+
+<script>
+function openLetter(type) {
+  const opened = localStorage.getItem("opened_" + type);
+
+  if (opened) {
+    alert("🔒 This letter was already opened once.");
+    return;
+  }
+
+  // 🌙 Night-only lock (10PM–5AM)
+  const hour = new Date().getHours();
+  if (hour < 22 && hour > 5) {
+    alert("🌙 This letter can only be opened after 10PM.");
+    return;
+  }
+
+  window.location.href = `open-when-letter.html?type=${type}`;
+}
+</script>
+
+</body>
+</html>

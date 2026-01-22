@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breathing With You 🫀</title>
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #1b1b2f, #4b2e83);
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: white;
+  text-align: center;
+}
+
+h1 { margin-bottom: 10px; }
+
+#heart {
+  font-size: 80px;
+  transition: transform 2s ease-in-out, text-shadow 2s ease-in-out;
+  margin: 20px 0;
+}
+
+#heart.glow {
+  text-shadow: 0 0 20px #ff6f91, 0 0 30px #ff8fab, 0 0 40px #ffb3c1;
+}
+
+button {
+  padding: 12px 25px;
+  border-radius: 25px;
+  border: none;
+  background: #ff6f91;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+button:hover { background: #ff4d6d; }
+
+#instructions {
+  font-size: 14px;
+  margin-top: 10px;
+  opacity: 0.8;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🫀 Breathe With Me</h1>
+<h2>Its ok love, breathe slowly...</h2>
+<div id="heart">💖</div>
+<p id="instructions">Tap the heart to start love</p>
+<h3>Follow the heart: Inhale… Exhale…</h3>
+
+<button onclick="location.href='love-arcade.html'">Back to Love Arcade</button>
+
+<script>
+const heart = document.getElementById("heart");
+
+// Smooth breathing animation
+let growing = true;
+setInterval(() => {
+  if (growing) {
+    heart.style.transform = "scale(1.4)";
+    heart.classList.add("glow");
+    growing = false;
+  } else {
+    heart.style.transform = "scale(1)";
+    heart.classList.remove("glow");
+    growing = true;
+  }
+}, 3000); // 3 seconds inhale/exhale
+
+// Optional: Add tiny heart bursts on click
+heart.addEventListener("click", () => {
+  const burst = document.createElement("div");
+  burst.innerText = "💖";
+  burst.style.position = "absolute";
+  burst.style.left = (window.innerWidth / 2 + (Math.random() * 100 - 50)) + "px";
+  burst.style.top = (window.innerHeight / 2 + (Math.random() * 100 - 50)) + "px";
+  burst.style.fontSize = "20px";
+  document.body.appendChild(burst);
+  
+  setTimeout(() => document.body.removeChild(burst), 1000);
+});
+</script>
+
+</body>
+</html>

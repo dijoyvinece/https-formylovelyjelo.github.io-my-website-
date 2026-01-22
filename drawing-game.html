@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Draw Your Heart 💖</title>
+<style>
+  body {
+    margin: 0;
+    background: linear-gradient(to bottom, #1b1b2f, #162447);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  h1 { margin-top: 10px; text-align: center; }
+
+  canvas { 
+    border-radius: 15px; 
+    background: rgba(255,255,255,0.05); 
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  .buttons {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  button, input {
+    margin: 5px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: none;
+    background: #ff8fab;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  button:hover, input:hover { background: #ff6f91; }
+
+  input[type=range] {
+    width: 100px;
+  }
+</style>
+</head>
+<body>
+
+<h1>💖 Draw Your Heart</h1>
+<canvas id="canvas" width="350" height="500"></canvas>
+
+<div class="buttons">
+  <label>Pen Size: <input type="range" id="penSize" min="1" max="20" value="5"></label>
+  <button onclick="toggleEraser()">Eraser</button>
+  <button onclick="clearCanvas()">Clear</button>
+  <button onclick="saveCanvas()">Save</button>
+  <button onclick="location.href='love-arcade.html'">Back</button>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+let drawing = false;
+let eraser = false;
+let penSize = document.getElementById('penSize').value;
+let lastX = 0;
+let lastY = 0;
+
+// Update pen size dynamically
+document.getElementById('penSize').addEventListener('input', e => {
+  penSize = e.target.value;
+});
+
+// Toggle eraser
+function toggleEraser() {
+  eraser = !eraser;
+  alert(eraser ? "Eraser ON 🩸" : "Pen ON ✍️");
+}
+
+// Mouse events
+canvas.addEventListener('mousedown', e => {
+  drawing = true;
+  lastX = e.offsetX;
+  lastY = e.offsetY;
+});
+canvas.addEventListener('mouseup', () => drawing = false);
+canvas.addEventListener('mouseout', () => drawing = false);
+canvas.addEventListener('mousemove', draw);
+
+// Touch events for mobile
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  drawing = true;
+  const touch = e.touches[0];
+  const rect = canvas.getBoundingClientRect();
+  lastX = touch.clientX - rect.left;
+  lastY = touch.clientY - rect.top;
+});
+canvas.addEventListener('touchend', () => drawing = false);
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  const touch = e.touches[0];
+  const rect = canvas.getBoundingClientRect();
+  draw({ offsetX: touch.clientX - rect.left, offsetY: touch.clientY - rect.top });
+});
+
+// Draw function
+function draw(e) {
+  if (!drawing) return;
+  let x = e.offsetX || lastX;
+  let y = e.offsetY || lastY;
+
+  ctx.strokeStyle = eraser ? '#162447' : '#ff4d6d';
+  ctx.lineWidth = penSize;
+  ctx.lineCap = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(x, y);
+  ctx.stroke();
+
+  lastX = x;
+  lastY = y;
+}
+
+// Clear canvas
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// Save canvas
+function saveCanvas() {
+  const link = document.createElement('a');
+  link.download = 'my_drawing.png';
+  link.href = canvas.toDataURL();
+  link.click();
+}
+</script>
+
+</body>
+</html>

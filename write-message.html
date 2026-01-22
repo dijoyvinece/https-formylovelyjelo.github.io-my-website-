@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Write Me a Message</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="romantic-bg">
+
+  <div class="card">
+    <h1>💌 Leave a Message</h1>
+    <p class="soft-text">
+      Kung feeling mo tinalikuran kana ng lahat at ayaw mo ng mga kausap,
+      you can freely write here 🤗  
+      don't worry ikaw lang makakabasa lahat 😊
+    </p>
+
+    <textarea id="messageInput" placeholder="Type your message here..."></textarea>
+
+    <button onclick="saveMessage()">💖 Save Message</button>
+    <button onclick="downloadMessages()">Download Messages</button>
+
+    <h3>📜 Your Messages</h3>
+    <div id="messages"></div>
+
+    <button class="back-btn" onclick="goBack()"> Back to Home</button>
+  </div>
+
+  <script>
+  const messagesDiv = document.getElementById("messages");
+
+  function loadMessages() {
+    const saved = JSON.parse(localStorage.getItem("loveMessages")) || [];
+    messagesDiv.innerHTML = "";
+
+    saved.forEach((msg, index) => {
+      const wrapper = document.createElement("div");
+      wrapper.style.marginBottom = "10px";
+
+      const p = document.createElement("p");
+      p.className = "saved-message";
+      p.textContent = `${index + 1}. ${msg}`;
+
+      const exportBtn = document.createElement("button");
+      exportBtn.textContent = "Export";
+      exportBtn.style.marginTop = "5px";
+      exportBtn.onclick = () => exportOneMessage(msg, index + 1);
+
+      wrapper.appendChild(p);
+      wrapper.appendChild(exportBtn);
+      messagesDiv.appendChild(wrapper);
+    });
+  }
+
+  function saveMessage() {
+    const input = document.getElementById("messageInput");
+    if (input.value.trim() === "") return;
+
+    const saved = JSON.parse(localStorage.getItem("loveMessages")) || [];
+    saved.push(input.value);
+    localStorage.setItem("loveMessages", JSON.stringify(saved));
+
+    input.value = "";
+    loadMessages();
+  }
+
+  function downloadMessages() {
+    const saved = JSON.parse(localStorage.getItem("loveMessages")) || [];
+
+    if (saved.length === 0) {
+      alert("No messages to download yet 💭");
+      return;
+    }
+
+    const content =
+      "💌 My Saved Messages 💌\n\n" +
+      saved.map((msg, i) => `${i + 1}. ${msg}`).join("\n\n");
+
+    downloadText(content, "my-love-messages.txt");
+  }
+
+  function exportOneMessage(message, number) {
+    const content =
+      "💌 A Message From My Heart 💌\n\n" + message;
+
+    downloadText(content, `love-message-${number}.txt`);
+  }
+
+  function downloadText(text, filename) {
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
+
+  function goBack() {
+    window.location.href = "index.html";
+  }
+
+  loadMessages();
+</script>
+
+
+</body>
+</html>

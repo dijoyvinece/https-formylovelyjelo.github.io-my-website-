@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Love Note 💌 from your Dibayn</title>
+<style>
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100vh; background: linear-gradient(to bottom, #ffe6f0, #ffccd5);
+  text-align: center;
+}
+.note-box {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 20px;
+  max-width: 350px;
+  font-size: 18px;
+  margin-top: 20px;
+}
+button { 
+  padding: 10px 20px; margin-top: 20px; border-radius: 25px; border:none;
+  background: #ff8fab; color:white; font-size:16px; cursor:pointer;
+}
+button:hover { background:#ff6f91; }
+</style>
+</head>
+<body>
+
+<h1>📜 Daily Love Note</h1>
+<p>Click the heart to unlock today’s special message 💖</p>
+<button onclick="showNote()">💌 Reveal</button>
+<div class="note-box" id="noteBox"></div>
+<button onclick="goBack()">Back</button>
+
+<script>
+const messages = [
+  "I love you more than words 🥹",
+  "You make my days brighter 💕",
+  "Forever my favourite person 💖",
+  "I smile because of you 😌",
+  "You’re my pahinga mahal",
+  "Mahal na mahal kita😘",
+  "Hindi kita iiwan, mahal ko.",
+  "You are my happiness 🥰"
+];
+
+function showNote() {
+  const today = new Date().toDateString();
+  if(localStorage.getItem(today)) {
+    document.getElementById('noteBox').innerText = localStorage.getItem(today);
+  } else {
+    const msg = messages[Math.floor(Math.random()*messages.length)];
+    document.getElementById('noteBox').innerText = msg;
+    localStorage.setItem(today, msg);
+  }
+}
+
+function goBack() { window.location.href='love-arcade.html'; }
+</script>
+
+</body>
+</html>

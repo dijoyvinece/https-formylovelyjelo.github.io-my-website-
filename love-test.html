@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Important Question 💘</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<br>
+<br>
+<br>
+<h5>Syempre pinindot mo, matigas ulo mo e😒</h5>
+<h3>At dahil pinindot mo, may tanong ako sayo😏</h3>
+<h1>Mahal mo ba ako?😗</h1>
+
+<div class="buttons">
+<button onclick="yesLove(); heartRain();">Yes na yes my Love, so sweet 😘💖</button>
+<button class="no-btn" onmouseover="runAway(this)">No! sino ka ba?🤨</button>
+
+</div>
+
+<div id="result"></div>
+
+<script>
+function yesLove() {
+  document.body.classList.add("blush");
+
+  document.getElementById("result").innerHTML = `
+    <h2 id="typeText"></h2>
+    <div class="glow-emoji float" onclick="heartBurst(event)">💖</div>
+  `;
+
+  typeText("I knew it 😌❤️");
+}
+
+
+function noLove() {
+  const noBtn = document.querySelector(".no-btn");
+  noBtn.classList.add("shake");
+
+  setTimeout(() => noBtn.classList.remove("shake"), 400);
+
+  document.getElementById("result").innerHTML = `
+    <h2>Aba't-- pinindot talaga!😡</h2>
+    <h1>Yes parin, mahal na mahal kong Divine🥰</h1>
+    <div class="glow-emoji" onclick="heartBurst(event)">😤💘</div>
+  `;
+}
+
+function runAway(btn) {
+  const x = Math.random() * (window.innerWidth - btn.offsetWidth);
+  const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+
+  btn.style.position = "absolute";
+  btn.style.left = x + "px";
+  btn.style.top = y + "px";
+}
+
+/* Heart burst effect */
+function heartBurst(e) {
+  for (let i = 0; i < 8; i++) {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "💖";
+
+    const x = (Math.random() * 100 - 50) + "px";
+    const y = (Math.random() * -100) + "px";
+
+    heart.style.setProperty("--x", x);
+    heart.style.setProperty("--y", y);
+
+    heart.style.left = e.clientX + "px";
+    heart.style.top = e.clientY + "px";
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 1000);
+  }
+}
+
+function typeText(text) {
+  let i = 0;
+  const target = document.getElementById("typeText");
+  target.innerHTML = "";
+
+  const interval = setInterval(() => {
+    target.innerHTML += text.charAt(i);
+    i++;
+    if (i >= text.length) clearInterval(interval);
+  }, 80);
+}
+
+function heartBurst(e) {
+  for (let i = 0; i < 10; i++) {
+    const heart = document.createElement("span");
+    heart.innerText = "💖";
+    heart.style.position = "absolute";
+    heart.style.left = e.clientX + "px";
+    heart.style.top = e.clientY + "px";
+    heart.style.fontSize = "18px";
+    heart.style.animation = "burst 0.8s ease-out forwards";
+
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 800);
+  }
+}
+
+
+/* No button runs away */
+function runAway(btn) {
+  const x = Math.random() * 200 - 100;
+  const y = Math.random() * 100 - 50;
+
+  btn.style.transform = `translate(${x}px, ${y}px)`;
+}
+
+function goBack() {
+  window.location.href = "index.html";
+}
+
+function heartRain() {
+  for (let i = 0; i < 20; i++) {
+    const heart = document.createElement("div");
+    heart.className = "rain-heart";
+    heart.innerText = "💖";
+
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.animationDuration = (2 + Math.random()) + "s";
+
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 3000);
+  }
+}
+</script>
+
+
+   <button onclick="goBack()">I love you Dibayn😘</button>
+   <footer>
+<p>Made with love by your programmer girlfriend 💻❤️</p>
+</footer>
+
+</body>
+</html>

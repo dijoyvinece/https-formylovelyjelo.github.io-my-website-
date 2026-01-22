@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Darts 🎯💖</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to bottom, #1b1b2f, #4b2e83);
+  font-family: 'Poppins', sans-serif;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+  text-align: center;
+}
+
+h1 { margin: 10px; }
+
+canvas {
+  background: rgba(255,255,255,0.05);
+  border-radius: 15px;
+  margin: 20px 0;
+  touch-action: none;
+}
+
+button {
+  margin: 10px 5px;
+  padding: 10px 20px;
+  border-radius: 25px;
+  border: none;
+  background: #ff8fab;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+button:hover { background: #ff6f91; }
+
+#scoreboard {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+</style>
+</head>
+<body>
+
+<h1>🎯 Love Darts</h1>
+<p>Tap to throw a dart & hit the bullseye! 💖</p>
+
+<div id="scoreboard">Score: 0 | High Score: 0</div>
+<canvas id="dartboard" width="350" height="350"></canvas>
+
+<button onclick="restartGame()">🔁 Restart</button>
+<button onclick="location.href='love-arcade.html'">⬅ Back to Arcade</button>
+
+<script>
+const canvas = document.getElementById('dartboard');
+const ctx = canvas.getContext('2d');
+
+let score = 0;
+let highScore = localStorage.getItem('loveDartsHigh') || 0;
+
+const board = {
+  x: canvas.width/2,
+  y: canvas.height/2,
+  radius: 140
+};
+
+function drawBoard() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // Draw circles
+  const colors = ['#ff4d6d','#ff6f91','#ff8fab','#ffc0cb'];
+  for(let i=0; i<4; i++){
+    ctx.beginPath();
+    ctx.arc(board.x, board.y, board.radius - i*30, 0, Math.PI*2);
+    ctx.fillStyle = colors[i];
+    ctx.fill();
+  }
+
+  // Bullseye
+  ctx.beginPath();
+  ctx.arc(board.x, board.y, 20, 0, Math.PI*2);
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+}
+
+function updateScoreboard() {
+  document.getElementById('scoreboard').innerText = `Score: ${score} | High Score: ${highScore}`;
+}
+
+function throwDart(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX || e.touches[0].clientX) - rect.left;
+  const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+  const dx = x - board.x;
+  const dy = y - board.y;
+  const distance = Math.sqrt(dx*dx + dy*dy);
+
+  let points = 0;
+  if(distance <= 20) points = 50;       // bullseye
+  else if(distance <= 50) points = 30;
+  else if(distance <= 80) points = 20;
+  else if(distance <= 110) points = 10;
+  else points = 5;
+
+  score += points;
+  if(score > highScore) {
+    highScore = score;
+    localStorage.setItem('loveDartsHigh', highScore);
+  }
+
+  // Show a heart popup where tapped
+  const heart = document.createElement('div');
+  heart.style.position = 'absolute';
+  heart.style.left = `${x + rect.left - 10}px`;
+  heart.style.top = `${y + rect.top - 10}px`;
+  heart.style.fontSize = '24px';
+  heart.style.color = '#ff4d6d';
+  heart.style.pointerEvents = 'none';
+  heart.innerText = '💖';
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),800);
+
+  updateScoreboard();
+}
+
+canvas.addEventListener('click', throwDart);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); throwDart(e); });
+
+function restartGame() {
+  score = 0;
+  updateScoreboard();
+  drawBoard();
+}
+
+// Initialize
+drawBoard();
+updateScoreboard();
+</script>
+
+</body>
+</html>

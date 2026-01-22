@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comfort Mode 🌸</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="comfort-bg">
+
+<div class="overlay"></div>
+
+<div class="container">
+  <button id="comfortBtn">I’m not okay🥺.</button>
+  <div class="message" id="message"></div>
+</div>
+
+<div class="breathing"></div>
+
+<script>
+const button = document.getElementById('comfortBtn');
+const overlay = document.querySelector('.overlay');
+const messageEl = document.getElementById('message');
+
+button.addEventListener('click', () => {
+  overlay.classList.add('active');
+  button.disabled = true;
+  button.style.opacity = '0.5';
+
+  // Typing message
+  const text = "You don’t have to be strong today, my Love. You need a rest, please rest my love. Im always here for you, mahal na mahal kita😘";
+  let i = 0;
+  messageEl.style.opacity = 1;
+
+  function typeMessage() {
+    if(i < text.length){
+      messageEl.textContent += text.charAt(i);
+      i++;
+      setTimeout(typeMessage, 120);
+    }
+  }
+  typeMessage();
+
+  // Heart particles
+  setInterval(() => {
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.style.left = Math.random() * window.innerWidth + 'px';
+    heart.style.background = 'rgba(255, 105, 180,' + Math.random() + ')';
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 3000);
+  }, 500);
+});
+
+
+</script>
+
+</body>
+</html>

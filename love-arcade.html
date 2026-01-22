@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Arcade 💖</title>
+<style>
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom, #1b1b2f, #4b2e83);
+  color: white;
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+h1 {
+  margin: 10px 0;
+  font-size: 2em;
+}
+
+p, h2 {
+  margin: 5px 0 15px;
+  font-weight: 300;
+}
+
+.arcade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 20px;
+}
+
+.arcade-grid button {
+  padding: 15px;
+  border-radius: 25px;
+  border: none;
+  background: #ff8fab;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+}
+
+.arcade-grid button:hover {
+  background: #ff6f91;
+  transform: scale(1.05);
+}
+
+button.back-btn {
+  padding: 12px 25px;
+  border-radius: 25px;
+  border: none;
+  background: #ff6f91;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button.back-btn:hover { background: #ff4d6d; }
+</style>
+</head>
+
+<body>
+
+<h1>🎮 Love Arcade</h1>
+<p>Pick a game, my love 💕</p>
+<h2>You can play a game anytime, it's all for you.</h2>
+
+<div class="arcade-grid">
+  <button onclick="openGame('heart-catch.html')">💖 Heart Catch</button>
+  <button onclick="openGame('sweet-game.html')">💖 Play Me</button>
+  <button onclick="openGame('memory.html')">🧠 Memory Match</button>
+  <button onclick="openGame('hidden-heart.html')">🫣 Find the Heart</button>
+    <button onclick="openGame('drawing-game.html')">📃Sketch</button>
+<button onclick="openGame('love-darts.html')">🎯 Love Darts</button>
+<button onclick="openGame('affection-breather.html')">💗 Affection Breather</button>
+<button onclick="openGame('daily-love-note.html')">📜 Daily Love Note</button>
+  <button onclick="openGame('comfort.html')">🤍 Comfort Mode</button>
+</div>
+
+<button class="back-btn" onclick="goBack()">Back Home</button>
+
+<script>
+function openGame(page) {
+  window.location.href = page;
+}
+function goBack() {
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Story Path 💗</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body {
+    background: linear-gradient(to bottom, #1b1b2f, #162447);
+    font-family: 'Poppins', sans-serif;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .story-box {
+    background: rgba(255,255,255,0.08);
+    padding: 20px;
+    border-radius: 20px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(255,182,193,0.4);
+  }
+
+  h1 { margin-bottom: 10px; }
+
+  .choices button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    border: none;
+    border-radius: 25px;
+    background: #ff8fab;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .choices button:hover { background: #ff6f91; }
+
+  #message { margin-top: 15px; font-size: 16px; }
+</style>
+</head>
+<body>
+
+<div class="story-box">
+  <h1>💗 Story Path</h1>
+  <p id="story-text">Welcome, my love. Shall we start our little story? 🥰</p>
+
+  <div class="choices" id="choices"></div>
+
+  <div id="message"></div>
+
+  <button onclick="goBack()">⬅ Back to Love Arcade</button>
+</div>
+
+<script>
+const story = {
+  start: {
+    text: "It's a cozy evening, and we are sitting together. What do you do?",
+    choices: [
+      { text: "Hold my hand 🤝", next: "hand" },
+      { text: "Give me a sweet smile 😘", next: "smile" }
+    ]
+  },
+  hand: {
+    text: "I squeeze your hand and smile. What next?",
+    choices: [
+      { text: "Look into my eyes 👀", next: "eyes" },
+      { text: "Tell me a secret 🤫", next: "secret" }
+    ]
+  },
+  smile: {
+    text: "I blush and feel my heart skip a beat. What do you do next?",
+    choices: [
+      { text: "Sit closer ❤️", next: "closer" },
+      { text: "Whisper 'I love you' 💌", next: "love" }
+    ]
+  },
+  eyes: {
+    text: "Our eyes meet and it's magical. You've unlocked a special message!",
+    choices: [],
+    unlock: "You are my everything 💖"
+  },
+  secret: {
+    text: "I whisper back my secret feelings. 🥰 You've unlocked a special message!",
+    choices: [],
+    unlock: "Always choosing you 💕"
+  },
+  closer: {
+    text: "We sit closer and laugh together. 🥹 Special moment unlocked!",
+    choices: [],
+    unlock: "Our little world ❤️"
+  },
+  love: {
+    text: "Hearing 'I love you' makes me melt. 💗 Special message unlocked!",
+    choices: [],
+    unlock: "Forever and always 💖"
+  }
+};
+
+let currentNode = 'start';
+const storyText = document.getElementById('story-text');
+const choicesDiv = document.getElementById('choices');
+const messageDiv = document.getElementById('message');
+
+function renderNode() {
+  const node = story[currentNode];
+  storyText.innerText = node.text;
+
+  choicesDiv.innerHTML = '';
+
+  if (node.unlock) {
+    messageDiv.innerHTML = `<p>🔓 ${node.unlock}</p>`;
+  } else {
+    messageDiv.innerHTML = '';
+  }
+
+  node.choices.forEach(choice => {
+    const btn = document.createElement('button');
+    btn.innerText = choice.text;
+    btn.onclick = () => {
+      currentNode = choice.next;
+      renderNode();
+    };
+    choicesDiv.appendChild(btn);
+  });
+}
+
+// Initialize
+renderNode();
+
+function goBack() {
+  window.location.href = 'love-arcade.html';
+}
+</script>
+
+</body>
+</html>

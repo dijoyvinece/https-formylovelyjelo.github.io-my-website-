@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Meter 💘</title>
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #ffdde1, #ee9ca7);
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #fff;
+  text-align: center;
+}
+
+h1 { margin-bottom: 10px; }
+
+#meterContainer {
+  width: 80%;
+  height: 40px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 25px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+#meter {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(to right, #ff8fab, #ff6f91);
+  border-radius: 25px;
+  transition: width 0.1s linear;
+}
+
+button {
+  padding: 15px 30px;
+  border-radius: 25px;
+  border: none;
+  background: #ff6f91;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+button:hover { background: #ff4d6d; }
+
+#message {
+  font-size: 16px;
+  margin-top: 15px;
+  min-height: 24px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>💘 Love Meter</h1>
+<p>Press and hold to fill my heart ❤️</p>
+
+<div id="meterContainer">
+  <div id="meter"></div>
+</div>
+
+<button id="loveBtn">Hold Me 💖</button>
+
+<div id="message"></div>
+
+<button onclick="location.href='love-arcade.html'">⬅ Back to Love Arcade</button>
+
+<script>
+const meter = document.getElementById("meter");
+const btn = document.getElementById("loveBtn");
+const msg = document.getElementById("message");
+
+let meterValue = 0;
+let interval;
+
+btn.addEventListener("mousedown", () => {
+  interval = setInterval(() => {
+    if (meterValue < 100) {
+      meterValue += 1;
+      meter.style.width = meterValue + "%";
+    } else {
+      msg.innerHTML = "🥰 You filled my heart! I love you endlessly 💖";
+    }
+  }, 50);
+});
+
+btn.addEventListener("mouseup", () => {
+  clearInterval(interval);
+});
+
+btn.addEventListener("mouseleave", () => {
+  clearInterval(interval);
+});
+</script>
+
+</body>
+</html>
